@@ -40,6 +40,15 @@ function ClockInOutComponent() {
         name: selectedName,
       };
 
+
+      sumbitAttendance(event);
+    
+    // Clear elapsed time
+    setElapsedTime(0);
+  };
+  };
+  
+  const sumbitAttendance = async (event) => {
       // Make API call to submit attendance event to Personio
       try {
         const response = await fetch('https://api.personio.com/events', {
@@ -63,9 +72,11 @@ function ClockInOutComponent() {
         // Handle any network or request errors
       }
     }
-  };
+  
 
   const formatTime = (time) => {
+
+  
     const seconds = Math.floor((time / 1000) % 60);
     const minutes = Math.floor((time / 1000 / 60) % 60);
     const hours = Math.floor((time / 1000 / 60 / 60) % 24);
@@ -80,9 +91,14 @@ function ClockInOutComponent() {
   };
 
   return (
-    <div>
-      
-      <select value={selectedName} onChange={handleNameChange}>
+    <div className="flex flex-col items-center">
+    <div className="my-4">Elapsed Time: {formatTime(elapsedTime)}</div>
+    <div className="relative inline-flex">
+      <select
+        value={selectedName}
+        onChange={handleNameChange}
+        className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500"
+      >
         <option value="">Select Name</option>
         {names.map((name) => (
           <option key={name} value={name}>
@@ -90,15 +106,33 @@ function ClockInOutComponent() {
           </option>
         ))}
       </select>
-      <button type="button"  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={handleStart} disabled={isRunning || !selectedName}>
-        Start
-      </button>
-      <button type="button"  class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={handleStop} disabled={!isRunning}>
-        Stop
-      </button>
-
-      <div className="text-lg text-gray-500" >Elapsed Time: {formatTime(elapsedTime)}</div>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M10 12l-4-4h8l-4 4z"
+          />
+        </svg>
+      </div>
     </div>
+    <button
+      onClick={handleStart}
+      disabled={isRunning || !selectedName}
+      className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Start
+    </button>
+    <button
+      onClick={handleStop}
+      disabled={!isRunning}
+      className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Stop
+    </button>
+  </div>
   );
 }
 
