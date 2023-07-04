@@ -9,6 +9,8 @@ function ClockInOutComponent() {
   const [selectedName, setSelectedName] = useState('');
   const [names] = useState(['John', 'Jane', 'Alice']);
 
+  const bearerToken = '';
+
   useEffect(() => {
     let interval;
     if (isRunning) {
@@ -34,27 +36,30 @@ function ClockInOutComponent() {
       setElapsedTime(endTime - startTime);
 
       // Create attendance event
-      const event = {
+      const AttendanceEvent = {
         start_time: startTime,
         end_time: endTime,
         name: selectedName,
       };
 
 
-      sumbitAttendance(event);
+      sumbitAttendance(AttendanceEvent);
     
     // Clear elapsed time
     setElapsedTime(0);
   };
   };
-  
+
   const sumbitAttendance = async (event) => {
       // Make API call to submit attendance event to Personio
       try {
-        const response = await fetch('https://api.personio.com/events', {
+        const response = await fetch('https://api.personio.de/v1/company/attendances', {
           method: 'POST',
+          mode: 'no-cors',
           headers: {
+            'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json',
+            'authorization' : 'Bearer ${bearerToken}'
             // Add any necessary headers for authentication or authorization
           },
           body: JSON.stringify(event),
@@ -62,6 +67,7 @@ function ClockInOutComponent() {
 
         if (response.ok) {
           console.log('Attendance event submitted successfully');
+          console.log(response)
           // Do something with the successful response, e.g., show a success message
         } else {
           console.error('Failed to submit attendance event');
@@ -121,7 +127,7 @@ function ClockInOutComponent() {
     <button
       onClick={handleStart}
       disabled={isRunning || !selectedName}
-      className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      className="mt-4 bg-blue-500 hover:bg-blue-700 disabled:bg-grey-100 text-white font-bold py-2 px-4 rounded"
     >
       Start
     </button>
