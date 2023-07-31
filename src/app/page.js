@@ -2,9 +2,7 @@ import Image from "next/image";
 import ClockInOutComponent from "./ClockInOut";
 
 const getToken = async () => {
-  console.log("going in here", process.env.NEXT_PUBLIC_CLIENT_SECRET);
   const options = {
-    mode: "no-cors",
     method: "POST",
     headers: {
       accept: "application/json",
@@ -12,8 +10,8 @@ const getToken = async () => {
       "Access-Control-Allow-Origin": "*",
     },
     body: JSON.stringify({
-      client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
-      client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      client_id: process.env.CLIENT_ID,
     }),
   };
 
@@ -24,6 +22,39 @@ const getToken = async () => {
 
 export default async function Home() {
   const data = await getToken();
+
+  const sumbitAttendance = async (event) => {
+    "use server";
+    // Make API call to submit attendance event to Personio
+    try {
+      const response = await fetch(
+        "https://api.personio.de/v1/company/attendances",
+        {
+          method: "POST",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            authorization: `Bearer ${data.data.token}`,
+            // Add any necessary headers for authentication or authorization
+          },
+          body: JSON.stringify(event),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Attendance event submitted successfully");
+        // console.log(response);
+        // Do something with the successful response, e.g., show a success message
+      } else {
+        console.error("Failed to submit attendance event");
+        console.log("Token", process.env.CLIENT_ID);
+        // Handle the error case, e.g., show an error message
+      }
+    } catch (error) {
+      console.error("Error occurred while submitting attendance event:", error);
+      // Handle any network or request errors
+    }
+  };
 
   return data ? (
     <main className="flex min-h-screen flex-col items-center justify-between p-48">
@@ -39,7 +70,7 @@ export default async function Home() {
       </div>
 
       <div className="relative flex place-items-center before:absolute before:h-[30px] before:w-[480px] ">
-        <ClockInOutComponent bearerToken={data.data.token} />
+        <ClockInOutComponent sumbitAttendance={sumbitAttendance} />
       </div>
     </main>
   ) : null;

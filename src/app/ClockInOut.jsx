@@ -1,8 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 
-function ClockInOutComponent({ bearerToken }) {
-  console.log("clock-in-props", bearerToken);
+function ClockInOutComponent({ sumbitAttendance }) {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -48,39 +47,6 @@ function ClockInOutComponent({ bearerToken }) {
     }
   };
 
-  const sumbitAttendance = async (event) => {
-    // Make API call to submit attendance event to Personio
-    try {
-      const response = await fetch(
-        "https://api.personio.de/v1/company/attendances",
-        {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-            authorization: "Bearer ",
-            // Add any necessary headers for authentication or authorization
-          },
-          body: JSON.stringify(event),
-        }
-      );
-
-      if (response.ok) {
-        console.log("Attendance event submitted successfully");
-        // console.log(response);
-        // Do something with the successful response, e.g., show a success message
-      } else {
-        console.error("Failed to submit attendance event");
-        console.log("Token", process.env.NEXT_PUBLIC_CLIENT_ID);
-        // Handle the error case, e.g., show an error message
-      }
-    } catch (error) {
-      console.error("Error occurred while submitting attendance event:", error);
-      // Handle any network or request errors
-    }
-  };
-
   const formatTime = (time) => {
     const seconds = Math.floor((time / 1000) % 60);
     const minutes = Math.floor((time / 1000 / 60) % 60);
@@ -98,7 +64,7 @@ function ClockInOutComponent({ bearerToken }) {
   return (
     <div className="flex flex-col items-center">
       <div className="my-4">Elapsed Time: {formatTime(elapsedTime)}</div>
-      <div className="relative inline-flex">
+      <form action={handleStop} className="relative inline-flex">
         <select
           value={selectedName}
           onChange={handleNameChange}
@@ -120,21 +86,21 @@ function ClockInOutComponent({ bearerToken }) {
             <path d="M10 12l-4-4h8l-4 4z" />
           </svg>
         </div>
-      </div>
-      <button
-        onClick={handleStart}
-        disabled={isRunning || !selectedName}
-        className="mt-4 bg-blue-500 hover:bg-blue-700 disabled:bg-grey-100 text-white font-bold py-2 px-4 rounded"
-      >
-        Start
-      </button>
-      <button
-        onClick={handleStop}
-        disabled={!isRunning}
-        className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Stop
-      </button>
+        <button
+          onClick={handleStart}
+          disabled={isRunning || !selectedName}
+          className="mt-4 bg-blue-500 hover:bg-blue-700 disabled:bg-grey-100 text-white font-bold py-2 px-4 rounded"
+        >
+          Start
+        </button>
+        <button
+          type="submit"
+          disabled={!isRunning}
+          className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Stop
+        </button>
+      </form>
     </div>
   );
 }
