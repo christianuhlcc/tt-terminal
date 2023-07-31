@@ -8,8 +8,8 @@ const getToken = () => {
     method: 'POST',
     headers: {accept: 'application/json', 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*',},
     body: JSON.stringify({
-      client_secret: 'NTNlNGNmYmQxZDM2MTZiMTdiYTg5ZjNkZjZiNjY3YWIxNTky',
-      client_id: 'YmFlNTQ2MzljODkyZDQ2NTJiOTJhZTQx'
+      client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
+      client_id: process.env.NEXT_PUBLIC_CLIENT_ID
     })
   };
   
@@ -80,7 +80,7 @@ function ClockInOutComponent() {
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json',
-            'authorization' : 'Bearer ${bearerToken}'
+            'authorization' : 'Bearer '
             // Add any necessary headers for authentication or authorization
           },
           body: JSON.stringify(event),
