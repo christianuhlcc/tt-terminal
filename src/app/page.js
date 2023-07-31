@@ -1,5 +1,6 @@
 import Image from "next/image";
 import ClockInOutComponent from "./ClockInOut";
+import { format } from "date-fns";
 
 const getToken = async () => {
   const options = {
@@ -40,7 +41,7 @@ export default async function Home() {
   const data = await getToken();
   const employees = await getEmployees(data.data.token);
 
-  const sumbitAttendance = async (event) => {
+  const clockIn = async (event) => {
     "use server";
     // Make API call to submit attendance event to Personio
     try {
@@ -62,19 +63,82 @@ export default async function Home() {
       console.log("-------");
       console.log(response);
       if (response.ok) {
-        console.log("Attendance event submitted successfully");
+        console.log("Attendance event opened successfully");
         // console.log(response);
         // Do something with the successful response, e.g., show a success message
       } else {
-        console.error("Failed to submit attendance event");
+        console.error("Failed to open attendance event");
         console.log("Token", process.env.CLIENT_ID);
         // Handle the error case, e.g., show an error message
       }
     } catch (error) {
-      console.error("Error occurred while submitting attendance event:", error);
+      console.error("Error occurred while opening attendance event:", error);
       // Handle any network or request errors
     }
   };
+
+
+  const clockOut = async (event) => {
+    "use server";
+    // Make API call to submit attendance event to Personio
+    console.log("clockout event", event)
+    try {
+      const response = await fetch(
+        `https://api.personio.de/v1/company/attendances/${event.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            authorization: `Bearer ${data.data.token}`,
+            // Add any necessary headers for authentication or authorization
+          },
+          body: JSON.stringify({
+            "end_time": event.end_time
+          }),
+        }
+      );
+
+      console.log(event);
+      if (response.ok) {
+        console.log("Attendance event closed successfully");
+        // console.log(response);
+        // Do something with the successful response, e.g., show a success message
+      } else {
+        console.error("Failed to close attendance event");
+        console.log("Token", process.env.CLIENT_ID);
+        // Handle the error case, e.g., show an error message
+      }
+    } catch (error) {
+      console.error("Error occurred while closing attendance event:", error);
+      // Handle any network or request errors
+    }
+  };
+
+  const fetchCurrentOpenEndedAttendance = async (employeeId) => {
+    "use server";
+
+    const options = {
+      method: 'GET',
+      next: { revalidate: 0 }, // don't cache brah
+      headers: {
+        accept: 'application/json',
+        "Access-Control-Allow-Origin": "*",
+        authorization: `Bearer ${data.data.token}`
+      }
+    };
+
+    const currentDay = format(new Date(), 'yyyy-MM-dd')
+
+    const attendances = await fetch(`https://api.personio.de/v1/company/attendances?start_date=${currentDay}&end_date=${currentDay}&includePending=true&employees[]=${employeeId}`, options)
+      .then(response => response.json())
+
+    console.log("returend filtered ", attendances.data)
+    const onlyOpenEndedAttendances = attendances.data.filter(attendancePeriod => !attendancePeriod.attributes.end_time)
+    console.log("filtered", onlyOpenEndedAttendances)
+
+    return onlyOpenEndedAttendances
+  }
 
   return data ? (
     <main className="flex min-h-screen flex-col items-center justify-between p-48">
@@ -90,7 +154,7 @@ export default async function Home() {
       </div>
 
       <div className="relative flex place-items-center before:absolute before:h-[30px] before:w-[480px] ">
-        <ClockInOutComponent sumbitAttendance={sumbitAttendance} employees={employees.data} />
+        <ClockInOutComponent clockIn={clockIn} clockOut={clockOut} employees={employees.data} fetchCurrentOpenEndedAttendance={fetchCurrentOpenEndedAttendance} />
       </div>
     </main>
   ) : null;
