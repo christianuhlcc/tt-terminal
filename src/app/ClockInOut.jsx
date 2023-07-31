@@ -1,13 +1,12 @@
 'use client'
 import { useEffect, useState } from "react";
 
-function ClockInOutComponent({ sumbitAttendance }) {
+function ClockInOutComponent({ sumbitAttendance, employees }) {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [selectedName, setSelectedName] = useState("");
-  const [names] = useState(["John", "Jane", "Alice"]);
 
   useEffect(() => {
     let interval;
@@ -35,9 +34,15 @@ function ClockInOutComponent({ sumbitAttendance }) {
 
       // Create attendance event
       const AttendanceEvent = {
-        start_time: startTime,
-        end_time: endTime,
-        name: selectedName,
+        attendances: [
+          {
+            start_time: "08:00",
+            //end_time: endTime,
+            employee: 7044877,
+            date: '2023-07-31',
+            break: 0
+          }
+        ]
       };
 
       sumbitAttendance(AttendanceEvent);
@@ -71,9 +76,9 @@ function ClockInOutComponent({ sumbitAttendance }) {
           className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500"
         >
           <option value="">Select Name</option>
-          {names.map((name) => (
-            <option key={name} value={name}>
-              {name}
+          {employees.map((employee) => (
+            <option key={employee.attributes.id.value} value={employee.attributes.id.value}>
+              {employee.attributes.first_name.value} {employee.attributes.last_name.value}
             </option>
           ))}
         </select>
@@ -91,14 +96,14 @@ function ClockInOutComponent({ sumbitAttendance }) {
           disabled={isRunning || !selectedName}
           className="mt-4 bg-blue-500 hover:bg-blue-700 disabled:bg-grey-100 text-white font-bold py-2 px-4 rounded"
         >
-          Start
+          Clock In
         </button>
         <button
           type="submit"
           disabled={!isRunning}
           className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
         >
-          Stop
+          Clock Out
         </button>
       </form>
     </div>

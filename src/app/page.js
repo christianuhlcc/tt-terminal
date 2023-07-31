@@ -20,8 +20,25 @@ const getToken = async () => {
   return result.json();
 };
 
+const getEmployees = async (token) => {
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      authorization: `Bearer ${token}`
+    }
+  };
+
+  const result = await fetch(`https://api.personio.de/v1/company/employees`, options);
+
+  return result.json();
+};
+
 export default async function Home() {
   const data = await getToken();
+  const employees = await getEmployees(data.data.token);
 
   const sumbitAttendance = async (event) => {
     "use server";
@@ -41,6 +58,9 @@ export default async function Home() {
         }
       );
 
+      console.log(event);
+      console.log("-------");
+      console.log(response);
       if (response.ok) {
         console.log("Attendance event submitted successfully");
         // console.log(response);
@@ -70,7 +90,7 @@ export default async function Home() {
       </div>
 
       <div className="relative flex place-items-center before:absolute before:h-[30px] before:w-[480px] ">
-        <ClockInOutComponent sumbitAttendance={sumbitAttendance} />
+        <ClockInOutComponent sumbitAttendance={sumbitAttendance} employees={employees.data} />
       </div>
     </main>
   ) : null;
