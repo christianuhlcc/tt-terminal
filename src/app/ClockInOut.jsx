@@ -1,7 +1,27 @@
 'use client'
+import { useQuery } from '@tanstack/react-query';
 import React, { useState, useEffect } from 'react';
 
+const getToken = () => {
+  const options = {
+    mode: 'no-cors',
+    method: 'POST',
+    headers: {accept: 'application/json', 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*',},
+    body: JSON.stringify({
+      client_secret: 'NTNlNGNmYmQxZDM2MTZiMTdiYTg5ZjNkZjZiNjY3YWIxNTky',
+      client_id: 'YmFlNTQ2MzljODkyZDQ2NTJiOTJhZTQx'
+    })
+  };
+  
+  return fetch('https://api.personio.de/v1/auth', options)
+    .then(response => response.json())
+    .then(response => console.log(response))
+    .catch(err => console.error(err));
+
+} 
+
 function ClockInOutComponent() {
+
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -9,7 +29,8 @@ function ClockInOutComponent() {
   const [selectedName, setSelectedName] = useState('');
   const [names] = useState(['John', 'Jane', 'Alice']);
 
-  const bearerToken = '';
+  const data = useQuery(['bearerToken'], getToken)
+  console.log('fetched bearer token', data)
 
   useEffect(() => {
     let interval;
@@ -71,6 +92,7 @@ function ClockInOutComponent() {
           // Do something with the successful response, e.g., show a success message
         } else {
           console.error('Failed to submit attendance event');
+          console.log('Token', process.env.NEXT_PUBLIC_CLIENT_ID)
           // Handle the error case, e.g., show an error message
         }
       } catch (error) {
@@ -78,7 +100,7 @@ function ClockInOutComponent() {
         // Handle any network or request errors
       }
     }
-  
+    
 
   const formatTime = (time) => {
 

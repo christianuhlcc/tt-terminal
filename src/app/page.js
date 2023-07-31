@@ -1,5 +1,23 @@
+'use client'
+
+import {
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query'
 import Image from 'next/image'
 import ClockInOutComponent from './ClockInOut'
+
+// Create a client
+const queryClient = new QueryClient()
+
+function App() {
+  return (
+    // Provide the client to your App
+    <QueryClientProvider client={queryClient}>
+      <ClockInOutComponent />
+    </QueryClientProvider>
+  )
+}
 
 export default function Home() {
   return (
@@ -19,7 +37,7 @@ export default function Home() {
 
       <div className="relative flex place-items-center before:absolute before:h-[30px] before:w-[480px] ">
       
-        <ClockInOutComponent />
+        <App />
       </div>
     </main>
   )
