@@ -118,11 +118,14 @@ export default async function Home() {
       `https://api.personio.de/v1/company/attendances?start_date=${currentDay}&end_date=${currentDay}&includePending=true&employees[]=${employeeId}`,
       options
     ).then((response) => response.json());
+    if(attendances) {
+      const onlyOpenEndedAttendances = attendances.data.filter(
+          (attendancePeriod) => !attendancePeriod.attributes.end_time
+      );
+      return onlyOpenEndedAttendances;
+    }
+    return [];
 
-    const onlyOpenEndedAttendances = attendances.data.filter(
-      (attendancePeriod) => !attendancePeriod.attributes.end_time
-    );
-    return onlyOpenEndedAttendances;
   };
 
   return data ? (

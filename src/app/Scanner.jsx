@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from "react";
 import { useZxing } from "react-zxing";
 
 export const BarcodeScanner = ({handleNameChange}) => {
