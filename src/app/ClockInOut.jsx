@@ -1,13 +1,21 @@
-'use client'
-import {useState} from "react";
-import {format} from "date-fns";
-import {Providers} from "@/app/Providers";
+"use client";
+import { useState } from "react";
+import { format } from "date-fns";
+import { Providers } from "@/app/Providers";
 import { VStack, useToast } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { BarcodeScanner } from "@/app/Scanner";
-import { Heading } from '@chakra-ui/react'
-import { Text } from '@chakra-ui/react'
+import { Heading } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
+
+const ClockedInText = ({ currentActiveAttendancePeriod }) =>
+  currentActiveAttendancePeriod &&
+  currentActiveAttendancePeriod.length === 1 ? (
+    <p style={{ alignSelf: "flex-start" }}>
+      {`You've clocked in at ${currentActiveAttendancePeriod[0].attributes.start_time}`}
+    </p>
+  ) : null;
 
 function ClockInOutComponent({
   clockIn,
@@ -23,21 +31,31 @@ function ClockInOutComponent({
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    const currentDate = new Date();
+    const currentEmployee = employees.find(
+      (employee) =>
+        employee.attributes.id.value === parseInt(selectedEmployeeId, 10)
+    );
+
+    const currentEmployeeName = currentEmployee
+      ? currentEmployee.attributes.first_name.value
+      : "Bob";
+
     if (currentActiveAttendancePeriod.length === 0) {
       const AttendanceEvent = {
         attendances: [
           {
-            start_time: format(new Date(), "HH:mm"),
+            start_time: format(currentDate, "HH:mm"),
             employee: selectedEmployeeId,
-            date: format(new Date(), "yyyy-MM-dd"),
+            date: format(currentDate, "yyyy-MM-dd"),
             break: 0,
           },
         ],
       };
       await clockIn(AttendanceEvent);
       toast({
-        title: "You successfully clocked in",
-        description: "Your Attendance has started",
+        title: `Welcome to work ${currentEmployeeName}!`,
+        description: `It's ${format(currentDate, "HH:mm")}`,
         status: "success",
         duration: 9000,
         isClosable: true,
@@ -45,11 +63,11 @@ function ClockInOutComponent({
     } else {
       await clockOut({
         id: currentActiveAttendancePeriod[0].id,
-        end_time: format(new Date(), "HH:mm"),
+        end_time: format(currentDate, "HH:mm"),
       });
       toast({
-        title: "You successfully clocked out",
-        description: "Your Attendance has ended",
+        title: `Bye ${currentEmployeeName}`,
+        description: `You clocked out at ${format(currentDate, "HH:mm")}`,
         status: "success",
         duration: 9000,
         isClosable: true,
@@ -78,14 +96,13 @@ function ClockInOutComponent({
 
   return (
     <Providers>
-      
       <VStack spacing={"16px"}>
-      <Heading>Time Clock</Heading>
-      <Text>Select your Name or scan a Barcode to Clock in</Text>
+        <Heading>Time Clock</Heading>
+        <Text>Select your Name or scan a Barcode to Clock in</Text>
 
         <BarcodeScanner handleNameChange={handleNameChange} />
 
-      <Heading>Your Name</Heading>
+        <Heading>Your Name</Heading>
         <form action={handleSubmit} className="">
           <VStack spacing={"16px"}>
             <Select
@@ -104,6 +121,9 @@ function ClockInOutComponent({
                 </option>
               ))}
             </Select>
+            <ClockedInText
+              currentActiveAttendancePeriod={currentActiveAttendancePeriod}
+            />
             <Button
               type="submit"
               variant="solid"
