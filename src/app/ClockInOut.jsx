@@ -6,6 +6,8 @@ import { VStack, useToast } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { BarcodeScanner } from "@/app/Scanner";
+import { Heading } from '@chakra-ui/react'
+import { Text } from '@chakra-ui/react'
 
 function ClockInOutComponent({
   clockIn,
@@ -76,8 +78,14 @@ function ClockInOutComponent({
 
   return (
     <Providers>
+      
       <VStack spacing={"16px"}>
+      <Heading>Time Clock</Heading>
+      <Text>Select your Name or scan a Barcode to Clock in</Text>
+
         <BarcodeScanner handleNameChange={handleNameChange} />
+
+      <Heading>Your Name</Heading>
         <form action={handleSubmit} className="">
           <VStack spacing={"16px"}>
             <Select
@@ -96,7 +104,6 @@ function ClockInOutComponent({
                 </option>
               ))}
             </Select>
-
             <Button
               type="submit"
               variant="solid"
