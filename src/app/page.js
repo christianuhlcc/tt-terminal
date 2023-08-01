@@ -42,7 +42,7 @@ export default async function Home() {
   const employees = await getEmployees(data.data.token);
 
   const clockIn = async (event) => {
-    "use server";o
+    "use server";
     try {
       const response = await fetch(
         "https://api.personio.de/v1/company/attendances",

@@ -5,14 +5,16 @@ import {Providers} from "@/app/Providers";
 import {useToast} from "@chakra-ui/react";
 import { Select } from '@chakra-ui/react'
 import { Button, ButtonGroup } from '@chakra-ui/react'
+import { Spinner } from '@chakra-ui/react'
 
 function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEndedAttendance}) {
     const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
     const [currentActiveAttendancePeriod, setCurrentActiveAttendancePeriod] = useState(null);
-    
+    const [isLoading, setIsLoading] = useState(false);
     const toast = useToast()
     
     const handleSubmit = async () => {
+        setIsLoading(true);
         if (currentActiveAttendancePeriod.length === 0) {
             const AttendanceEvent = {
                 attendances: [
@@ -48,9 +50,11 @@ function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEnde
 
         setSelectedEmployeeId('');
         setCurrentActiveAttendancePeriod(null);
+        setIsLoading(false);
     };
 
     const handleNameChange = async (event) => {
+        setIsLoading(true);
         setCurrentActiveAttendancePeriod(null)
         setSelectedEmployeeId(event.target.value);
         const attendances = await fetchCurrentOpenEndedAttendance(event.target.value)
@@ -59,11 +63,13 @@ function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEnde
         } else {
             setCurrentActiveAttendancePeriod([attendances[0]])
         }
+        setIsLoading(false);
     };
 
     return (
         <Providers>
-            <div className="flex flex-col">
+            <div className="flex flex-col justify-center ">
+                {isLoading && <Spinner/>}
                 <form action={handleSubmit} className="">
                     <Select
                         value={selectedEmployeeId}
