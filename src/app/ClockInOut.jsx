@@ -63,6 +63,7 @@ function ClockInOutComponent({
 
   useEffect(() => {
     const getDevices = async () => {
+      const media = await getUserMedia({ video: true });
       const devices = await navigator.mediaDevices.enumerateDevices();
       devices.forEach((device) => {
         console.log("device", device.label, device.deviceId, device.groupId);
