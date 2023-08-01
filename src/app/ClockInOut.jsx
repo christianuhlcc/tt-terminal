@@ -1,40 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
 import { Providers } from "@/app/Providers";
-import {
-  Input,
-  VStack,
-  useToast,
-  NumberInput,
-  PinInputField,
-  PinInput,
-  HStack,
-  FormLabel,
-  FormErrorMessage,
-  FormControl,
-} from "@chakra-ui/react";
+import { VStack, useToast } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { BarcodeScanner } from "@/app/Scanner";
 import { Heading } from "@chakra-ui/react";
 import { Text } from "@chakra-ui/react";
-
-const findCurrentEmployee = (employees, selectedEmployeeId) => {
-  if (!selectedEmployeeId) return undefined;
-  return employees.find(
-    (employee) =>
-      employee.attributes.id.value === parseInt(selectedEmployeeId, 10)
-  );
-};
-
-const getTerminalPin = (employee) => {
-  if (!employee) return undefined;
-  const terminalPin = Object.values(employee.attributes).find(
-    (attribute) => attribute.label === "Terminal PIN"
-  );
-  return terminalPin?.value;
-};
 
 const ClockedInText = ({ currentActiveAttendancePeriod }) =>
   currentActiveAttendancePeriod &&
@@ -51,30 +24,18 @@ function ClockInOutComponent({
   fetchCurrentOpenEndedAttendance,
 }) {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
-  const [pin, setPin] = useState("");
   const [currentActiveAttendancePeriod, setCurrentActiveAttendancePeriod] =
     useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isPinInputInvalid, setIsPinInputInvalid] = useState(false);
-  const [deviceId, setDeviceId] = useState(null);
   const toast = useToast();
-  const currentEmployee = findCurrentEmployee(employees, selectedEmployeeId);
-  const terminalPin = getTerminalPin(currentEmployee);
-
-  useEffect(() => {
-    const getDevices = async () => {
-      const media = await navigator.getUserMedia({ video: true });
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      devices.forEach((device) => {
-        console.log("device", device.label, device.deviceId, device.groupId);
-      });
-    };
-    getDevices();
-  });
 
   const handleSubmit = async () => {
     setIsLoading(true);
     const currentDate = new Date();
+    const currentEmployee = employees.find(
+      (employee) =>
+        employee.attributes.id.value === parseInt(selectedEmployeeId, 10)
+    );
 
     const currentEmployeeName = currentEmployee
       ? currentEmployee.attributes.first_name.value
@@ -116,7 +77,6 @@ function ClockInOutComponent({
     setSelectedEmployeeId("");
     setCurrentActiveAttendancePeriod(null);
     setIsLoading(false);
-    setPin("");
   };
 
   const handleNameChange = async (event) => {
@@ -134,39 +94,18 @@ function ClockInOutComponent({
     setIsLoading(false);
   };
 
-  const handlePINChange = (inputPin) => {
-    if (inputPin.length !== 4) {
-      setIsPinInputInvalid(false);
-    }
-    setPin(inputPin);
-  };
-
-  const handlePINComplete = (inputPin) => {
-    if (terminalPin === inputPin) {
-      setIsPinInputInvalid(false);
-    } else {
-      setIsPinInputInvalid(true);
-    }
-  };
-  const isPinValid = terminalPin === "" || terminalPin === pin;
-
   return (
     <Providers>
       <VStack spacing={"16px"}>
         <Heading alignSelf="flex-start">Time Clock</Heading>
         <Text alignSelf="flex-start">
-          Select your name or scan a QR to Clock in
+          Select your Name or scan a Barcode to Clock in
         </Text>
 
-        {deviceId && (
-          <BarcodeScanner
-            handleNameChange={handleNameChange}
-            deviceId={deviceId}
-          />
-        )}
+        <BarcodeScanner handleNameChange={handleNameChange} />
 
+        <Heading alignSelf="flex-start">Your Name</Heading>
         <form action={handleSubmit} className="">
-          <FormLabel alignSelf="flex-start">Your Name</FormLabel>
           <VStack spacing={"16px"}>
             <Select
               value={selectedEmployeeId}
@@ -184,30 +123,6 @@ function ClockInOutComponent({
                 </option>
               ))}
             </Select>
-
-            {currentEmployee && terminalPin && terminalPin !== "" && (
-              <FormControl isInvalid={isPinInputInvalid}>
-                <FormLabel>PIN</FormLabel>
-                <HStack alignSelf="flex-start">
-                  <PinInput
-                    size="lg"
-                    onChange={handlePINChange}
-                    onComplete={handlePINComplete}
-                    mask
-                    isInvalid={isPinInputInvalid}
-                  >
-                    <PinInputField />
-                    <PinInputField />
-                    <PinInputField />
-                    <PinInputField />
-                  </PinInput>
-                </HStack>
-                <FormErrorMessage>
-                  Invalid pin! Correct it and try again.
-                </FormErrorMessage>
-              </FormControl>
-            )}
-
             <ClockedInText
               currentActiveAttendancePeriod={currentActiveAttendancePeriod}
             />
@@ -216,7 +131,7 @@ function ClockInOutComponent({
               variant="solid"
               colorScheme="linkedin"
               isLoading={isLoading}
-              isDisabled={!currentActiveAttendancePeriod || !isPinValid}
+              isDisabled={!currentActiveAttendancePeriod}
               width={"100%"}
             >
               {getButtonText(currentActiveAttendancePeriod)}

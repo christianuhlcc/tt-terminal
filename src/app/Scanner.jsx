@@ -2,7 +2,7 @@
 
 import { useZxing } from "react-zxing";
 
-export const BarcodeScanner = ({ handleNameChange, deviceId }) => {
+export const BarcodeScanner = ({ handleNameChange }) => {
   const { ref } = useZxing({
     onResult(result) {
       const event = {
