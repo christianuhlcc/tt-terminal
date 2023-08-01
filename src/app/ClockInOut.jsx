@@ -3,15 +3,17 @@ import {useState} from "react";
 import {format} from "date-fns";
 import {Providers} from "@/app/Providers";
 import {useToast} from "@chakra-ui/react";
+import { Select } from '@chakra-ui/react'
+import { Button, ButtonGroup } from '@chakra-ui/react'
 
 function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEndedAttendance}) {
     const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
     const [currentActiveAttendancePeriod, setCurrentActiveAttendancePeriod] = useState(null);
+    
     const toast = useToast()
+    
     const handleSubmit = async () => {
-
         if (currentActiveAttendancePeriod.length === 0) {
-            // Create attendance event
             const AttendanceEvent = {
                 attendances: [
                     {
@@ -25,6 +27,7 @@ function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEnde
             await clockIn(AttendanceEvent);
             toast({
                 title: 'You successfully clocked in',
+                description: 'Your Attendance has started',
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
@@ -36,6 +39,7 @@ function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEnde
             })
             toast({
                 title: 'You successfully clocked out',
+                description: 'Your Attendance has ended',
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
@@ -59,9 +63,9 @@ function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEnde
 
     return (
         <Providers>
-            <div className="flex flex-col items-center">
-                <form action={handleSubmit} className="relative inline-flex">
-                    <select
+            <div className="flex flex-col">
+                <form action={handleSubmit} className="">
+                    <Select
                         value={selectedEmployeeId}
                         onChange={handleNameChange}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
@@ -71,12 +75,12 @@ function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEnde
                                 {employee.attributes.first_name.value} {employee.attributes.last_name.value}
                             </option>
                         ))}
-                    </select>
-                    {currentActiveAttendancePeriod && <button
+                    </Select>
+                    {currentActiveAttendancePeriod && <Button
                         type="submit"
-                        className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold rounded">
                         Clock {currentActiveAttendancePeriod.length === 1 ? "Out" : "In"}
-                    </button>}
+                    </Button>}
                 </form>
             </div>
         </Providers>
