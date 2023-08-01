@@ -4,7 +4,7 @@ import {format} from "date-fns";
 import {Providers} from "@/app/Providers";
 import {useToast} from "@chakra-ui/react";
 import { Select } from '@chakra-ui/react'
-import { Button, ButtonGroup } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 import { Spinner } from '@chakra-ui/react'
 import {BarcodeScanner} from "@/app/Scanner";
 
