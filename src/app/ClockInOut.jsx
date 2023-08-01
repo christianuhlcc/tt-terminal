@@ -6,6 +6,7 @@ import {useToast} from "@chakra-ui/react";
 import { Select } from '@chakra-ui/react'
 import { Button, ButtonGroup } from '@chakra-ui/react'
 import { Spinner } from '@chakra-ui/react'
+import {BarcodeScanner} from "@/app/Scanner";
 
 function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEndedAttendance}) {
     const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
@@ -70,6 +71,7 @@ function ClockInOutComponent({clockIn, clockOut, employees, fetchCurrentOpenEnde
         <Providers>
             <div className="flex flex-col justify-center ">
                 {isLoading && <Spinner/>}
+                <BarcodeScanner handleNameChange={handleNameChange}/>
                 <form action={handleSubmit} className="">
                     <Select
                         value={selectedEmployeeId}

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import ClockInOutComponent from "./ClockInOut";
 import { format } from "date-fns";
+import {BarcodeScanner} from "@/app/Scanner";
 
 const getToken = async () => {
   const options = {
