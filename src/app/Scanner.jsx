@@ -15,5 +15,10 @@ export const BarcodeScanner = ({handleNameChange}) => {
         },
     });
 
-    return <video width={"300px"} height={"300px"} ref={ref} />;
+    return (
+      <div className="relative-video-container">
+        <video width={"300px"} height={"300px"} ref={ref} />
+        <p className="video-overlay">Scan your QR code here</p>
+      </div>
+    );
 };

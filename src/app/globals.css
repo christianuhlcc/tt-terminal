@@ -17,3 +17,19 @@ video {
 form {
   width: 100%;
 }
+
+.relative-video-container {
+  position: relative;
+}
+
+p.video-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  background: black;
+  height: 30px;
+  font-size: 18px;
+  color: white;
+  text-align: center;
+}

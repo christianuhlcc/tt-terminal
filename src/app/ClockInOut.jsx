@@ -97,12 +97,14 @@ function ClockInOutComponent({
   return (
     <Providers>
       <VStack spacing={"16px"}>
-        <Heading>Time Clock</Heading>
-        <Text>Select your Name or scan a Barcode to Clock in</Text>
+        <Heading alignSelf="flex-start">Time Clock</Heading>
+        <Text alignSelf="flex-start">
+          Select your Name or scan a Barcode to Clock in
+        </Text>
 
         <BarcodeScanner handleNameChange={handleNameChange} />
 
-        <Heading>Your Name</Heading>
+        <Heading alignSelf="flex-start">Your Name</Heading>
         <form action={handleSubmit} className="">
           <VStack spacing={"16px"}>
             <Select
