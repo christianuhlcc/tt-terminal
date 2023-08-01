@@ -58,19 +58,6 @@ function ClockInOutComponent({
   const currentEmployee = findCurrentEmployee(employees, selectedEmployeeId);
   const terminalPin = getTerminalPin(currentEmployee);
 
-  useEffect(() => {
-    const getDevices = async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === "videoinput"
-      );
-      videoDevices.forEach((device) => {
-        console.log("device", device.label, device.deviceId, device.groupId);
-      });
-    };
-    getDevices();
-  });
-
   const handleSubmit = async () => {
     setIsLoading(true);
     const currentDate = new Date();
