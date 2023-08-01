@@ -15,7 +15,5 @@ export const BarcodeScanner = ({handleNameChange}) => {
         },
     });
 
-    return (
-        <video width={'200px'} height={'200px'} ref={ref} />
-    );
+    return <video width={"300px"} height={"300px"} ref={ref} />;
 };

@@ -11,4 +11,9 @@ body {
 
 video {
   transform: rotateY(180deg);
+  border-radius: 8px;
+}
+
+form {
+  width: 100%;
 }

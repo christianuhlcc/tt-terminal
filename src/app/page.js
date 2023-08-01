@@ -126,7 +126,7 @@ export default async function Home() {
   };
 
   return data ? (
-    <main style={{ padding: "12px 24px" }}>
+    <main style={{ padding: "12px 24px", height: "100vh" }}>
       <Header />
       <Content>
         <ClockInOutComponent

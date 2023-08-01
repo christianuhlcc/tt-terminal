@@ -1,6 +1,15 @@
 "use client";
-import { Stack, HStack, VStack } from "@chakra-ui/react";
+import { Flex, VStack } from "@chakra-ui/react";
 
-const Content = ({ children }) => <VStack spacing="12px">{children}</VStack>;
+const Content = ({ children }) => (
+  <Flex
+    direction="column"
+    height={"100%"}
+    justifyContent={"center"}
+    alignItems={"center"}
+  >
+    {children}
+  </Flex>
+);
 
 export default Content;

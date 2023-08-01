@@ -2,8 +2,8 @@
 import {useState} from "react";
 import {format} from "date-fns";
 import {Providers} from "@/app/Providers";
-import {useToast} from "@chakra-ui/react";
-import { Select } from '@chakra-ui/react'
+import { VStack, useToast } from "@chakra-ui/react";
+import { Select } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { BarcodeScanner } from "@/app/Scanner";
 
@@ -76,35 +76,40 @@ function ClockInOutComponent({
 
   return (
     <Providers>
-      <BarcodeScanner handleNameChange={handleNameChange} />
-      <form action={handleSubmit} className="">
-        <Select
-          value={selectedEmployeeId}
-          onChange={handleNameChange}
-          className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500"
-        >
-          <option value="">Select Name</option>
-          {employees.map((employee) => (
-            <option
-              key={employee.attributes.id.value}
-              value={employee.attributes.id.value}
+      <VStack spacing={"16px"}>
+        <BarcodeScanner handleNameChange={handleNameChange} />
+        <form action={handleSubmit} className="">
+          <VStack spacing={"16px"}>
+            <Select
+              value={selectedEmployeeId}
+              onChange={handleNameChange}
+              className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500"
             >
-              {employee.attributes.first_name.value}{" "}
-              {employee.attributes.last_name.value}
-            </option>
-          ))}
-        </Select>
+              <option value="">Select Name</option>
+              {employees.map((employee) => (
+                <option
+                  key={employee.attributes.id.value}
+                  value={employee.attributes.id.value}
+                >
+                  {employee.attributes.first_name.value}{" "}
+                  {employee.attributes.last_name.value}
+                </option>
+              ))}
+            </Select>
 
-        <Button
-          type="submit"
-          variant="solid"
-          colorScheme="linkedin"
-          isLoading={isLoading}
-          isDisabled={!currentActiveAttendancePeriod}
-        >
-          {getButtonText(currentActiveAttendancePeriod)}
-        </Button>
-      </form>
+            <Button
+              type="submit"
+              variant="solid"
+              colorScheme="linkedin"
+              isLoading={isLoading}
+              isDisabled={!currentActiveAttendancePeriod}
+              width={"100%"}
+            >
+              {getButtonText(currentActiveAttendancePeriod)}
+            </Button>
+          </VStack>
+        </form>
+      </VStack>
     </Providers>
   );
 }
