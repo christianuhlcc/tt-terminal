@@ -131,6 +131,7 @@ function ClockInOutComponent({
       setCurrentActiveAttendancePeriod([attendances[0]]);
     }
     setIsLoading(false);
+    setPin("");
   };
 
   const handlePINChange = (inputPin) => {
@@ -208,7 +209,7 @@ function ClockInOutComponent({
             <Button
               type="submit"
               variant="solid"
-              colorScheme="linkedin"
+              colorScheme={getButtonTheme(currentActiveAttendancePeriod)}
               isLoading={isLoading}
               isDisabled={!currentActiveAttendancePeriod || !isPinValid}
               width={"100%"}
@@ -227,6 +228,13 @@ const getButtonText = (currentActiveAttendancePeriod) => {
     return "Clock in / out";
   }
   return currentActiveAttendancePeriod.length === 1 ? "Clock out" : "Clock in";
+};
+
+const getButtonTheme = (currentActiveAttendancePeriod) => {
+  if (!currentActiveAttendancePeriod) {
+    return "linkedin";
+  }
+  return currentActiveAttendancePeriod.length === 1 ? "whatsapp" : "linkedin";
 };
 
 export default ClockInOutComponent;
