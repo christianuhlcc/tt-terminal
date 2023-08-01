@@ -64,10 +64,7 @@ function ClockInOutComponent({
   useEffect(() => {
     const getDevices = async () => {
       const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === "videoinput"
-      );
-      videoDevices.forEach((device) => {
+      devices.forEach((device) => {
         console.log("device", device.label, device.deviceId, device.groupId);
       });
     };
